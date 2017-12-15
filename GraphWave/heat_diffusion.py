@@ -40,7 +40,7 @@ def heat_diffusion(G,taus=[1, 10, 25, 50],diff_type="immediate",b=1,type_graph="
             Hk = pygsp.filters.Wave(G, taus, normalize=False)
         else:
             Hk = pygsp.filters.Heat(G, taus, normalize=False)
-            
+    
     elif type_graph=="nx":
         A=nx.adjacency_matrix(G)
         N=G.number_of_nodes()
@@ -57,6 +57,7 @@ def heat_diffusion(G,taus=[1, 10, 25, 50],diff_type="immediate",b=1,type_graph="
     else:
         print "graph type not recognized"
         return False
+    
     heat={i:pd.DataFrame(np.zeros((N,N)), index=range(N))  for i in range(len(taus))}   
     for v in range(N):
             ### for each node v , create a signal that corresponds to a Dirac of energy
@@ -67,6 +68,7 @@ def heat_diffusion(G,taus=[1, 10, 25, 50],diff_type="immediate",b=1,type_graph="
             Sf = Sf_vec.reshape((Sf_vec.size/len(taus), len(taus)), order='F')
             for  i in range(len(taus)):
                 heat[i].iloc[:,v]=Sf[:,i] ### stores in different dataframes the results
+    
     return [heat[i] for i in range(len(taus))]
 #return pd.DataFrame.from_dict(heat)
 
