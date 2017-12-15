@@ -12,76 +12,76 @@ from shapes import *
 
 
 def build_structure(width_basis,basis_type,list_shapes, start=0,add_random_edges=0,plot=False,savefig=False):
-	'''This function creates a basis (torus, string, or cycle) and attaches elements of 
-	the type in the list randomly along the basis.
-	Possibility to add random edges afterwards
-	INPUT:
-	--------------------------------------------------------------------------------------
-	width_basis      :      width (in terms of number of nodes) of the basis
-	basis_type       :      (torus, string, or cycle)
-	shapes           :      list of shape list (1st arg: type of shape, next args: args for building the shape, except for the start)
-	start            :      initial nb for the first node
-	add_random_edges :      nb of edges to randomly add on the structure
-	plot,savefig     :      plotting and saving parameters
-	OUTPUT:
-	--------------------------------------------------------------------------------------
-	Basis            :       a nx graph with the particular shape
-	colors           :       labels for each role
-	'''
-	Basis,index_shape=eval(basis_type)(start,width_basis)
-	start+=nx.number_of_nodes(Basis)
-	### Sample (with replacement) where to attach the new motives
-	plugins=np.random.choice(nx.number_of_nodes(Basis),len(list_shapes), replace=False)
-	nb_shape=0
-	colors=[0]*nx.number_of_nodes(Basis)
-	seen_shapes=["Basis"]
-	seen_colors_start=[0]
+    '''This function creates a basis (torus, string, or cycle) and attaches elements of 
+    the type in the list randomly along the basis.
+    Possibility to add random edges afterwards
+    INPUT:
+    --------------------------------------------------------------------------------------
+    width_basis      :      width (in terms of number of nodes) of the basis
+    basis_type       :      (torus, string, or cycle)
+    shapes           :      list of shape list (1st arg: type of shape, next args: args for building the shape, except for the start)
+    start            :      initial nb for the first node
+    add_random_edges :      nb of edges to randomly add on the structure
+    plot,savefig     :      plotting and saving parameters
+    OUTPUT:
+    --------------------------------------------------------------------------------------
+    Basis            :       a nx graph with the particular shape
+    colors           :       labels for each role
+    '''
+    Basis,index_shape=eval(basis_type)(start,width_basis)
+    start+=nx.number_of_nodes(Basis)
+    ### Sample (with replacement) where to attach the new motives
+    plugins=np.random.choice(nx.number_of_nodes(Basis),len(list_shapes), replace=False)
+    nb_shape=0
+    colors=[0]*nx.number_of_nodes(Basis)
+    seen_shapes=["Basis"]
+    seen_colors_start=[0]
 
-	for p in plugins:
-		index_shape[p]=1
-	print index_shape
-	col_start=len(np.unique(index_shape))
-	for shape in list_shapes:
-		shape_type=shape[0]
-		col_start=len(np.unique(index_shape)) ## numbers of roles so far
-		if shape_type not in seen_shapes:
-			print "whoops"
-			seen_shapes.append(shape_type)
-			seen_colors_start.append(np.max(index_shape)+1)
-			col_start=np.max(index_shape)+1
-		else:
-			ind=seen_shapes.index(shape_type)
-			col_start=seen_colors_start[ind]
-		args=[start]
-		args+=shape[1:]
-		args+=[col_start+1]
-		S,roles=eval(shape_type)(*args)
-		### Attach the shape to the basis
-		Basis.add_nodes_from(S.nodes())
-		Basis.add_edges_from(S.edges())
-		Basis.add_edges_from([(start,plugins[nb_shape])])
-		ind=seen_shapes.index(shape_type)
-		index_shape[plugins[nb_shape]]+=(-2-ind)
-		nb_shape+=1
-		colors+=[nb_shape]*nx.number_of_nodes(S)
-		index_shape+=roles
-		i=seen_shapes.index(shape_type)
-		#index_shape+=[2*i]*nx.number_of_nodes(S)
-		index_shape[start]=col_start
-		start+=nx.number_of_nodes(S)
-	print seen_shapes
-	if add_random_edges>0:
-		## add random edges between nodes:
-		for p in range(add_random_edges):
-			src,dest=np.random.choice(nx.number_of_nodes(Basis),2, replace=False)
-			print src, dest
-			Basis.add_edges_from([(src,dest)])
-	if plot==True:
-		nx.draw_networkx(Basis,node_color=index_shape,cmap="PuRd")
-		if savefig==True:
-			plt.savefig("plots/structure.png")
-	return Basis,colors, plugins,index_shape
-	
+    for p in plugins:
+        index_shape[p]=1
+    print index_shape
+    col_start=len(np.unique(index_shape))
+    for shape in list_shapes:
+        shape_type=shape[0]
+        col_start=len(np.unique(index_shape)) ## numbers of roles so far
+        if shape_type not in seen_shapes:
+            print "whoops"
+            seen_shapes.append(shape_type)
+            seen_colors_start.append(np.max(index_shape)+1)
+            col_start=np.max(index_shape)+1
+        else:
+            ind=seen_shapes.index(shape_type)
+            col_start=seen_colors_start[ind]
+        args=[start]
+        args+=shape[1:]
+        args+=[col_start+1]
+        S,roles=eval(shape_type)(*args)
+        ### Attach the shape to the basis
+        Basis.add_nodes_from(S.nodes())
+        Basis.add_edges_from(S.edges())
+        Basis.add_edges_from([(start,plugins[nb_shape])])
+        ind=seen_shapes.index(shape_type)
+        index_shape[plugins[nb_shape]]+=(-2-ind)
+        nb_shape+=1
+        colors+=[nb_shape]*nx.number_of_nodes(S)
+        index_shape+=roles
+        i=seen_shapes.index(shape_type)
+        #index_shape+=[2*i]*nx.number_of_nodes(S)
+        index_shape[start]=col_start
+        start+=nx.number_of_nodes(S)
+    print seen_shapes
+    if add_random_edges>0:
+        ## add random edges between nodes:
+        for p in range(add_random_edges):
+            src,dest=np.random.choice(nx.number_of_nodes(Basis),2, replace=False)
+            print src, dest
+            Basis.add_edges_from([(src,dest)])
+    if plot==True:
+        nx.draw_networkx(Basis,node_color=index_shape,cmap="PuRd")
+        if savefig==True:
+            plt.savefig("plots/structure.png")
+    return Basis,colors, plugins,index_shape
+    
 def build_regular_structure(width_basis,basis_type, nb_shapes,shape, start=0,add_random_edges=0,plot=False,savefig=True):
     ''' This function creates a basis (torus, string, or cycle) and attaches elements of 
     the type in the list regularly along the basis.
@@ -91,9 +91,9 @@ def build_regular_structure(width_basis,basis_type, nb_shapes,shape, start=0,add
     width_basis      :      width (in terms of number of nodes) of the basis
     basis_type       :      (torus, string, or cycle)
     shapes           :      list of shape list (1st arg: type of shape, next args: args for building the shape, except for the start)
-	start            :      initial nb for the first node
-	add_random_edges :      nb of edges to randomly add on the structure
-	plot,savefig     :      plotting and saving parameters
+    start            :      initial nb for the first node
+    add_random_edges :      nb of edges to randomly add on the structure
+    plot,savefig     :      plotting and saving parameters
     OUTPUT:
     --------------------------------------------------------------------------------------
     Basis            :       a nx graph with the particular shape
@@ -135,13 +135,6 @@ def build_regular_structure(width_basis,basis_type, nb_shapes,shape, start=0,add
         if savefig==True:
             plt.savefig("plots/regular_structure.png")
     return Basis,colors
-
-
-
-
-
-
-
 
 
 def build_lego_structure(list_shapes, start=0,betweenness_density=2.5,plot=False,savefig=False,save2text=''):

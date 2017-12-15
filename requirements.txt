@@ -1,0 +1,4 @@
+pygsp
+networkx
+pyemd
+seaborn
