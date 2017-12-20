@@ -18,7 +18,7 @@ from sklearn.cluster import KMeans
 from rsub import *
 from matplotlib import pyplot as plt
 
-from build_graph import build_regular_structure
+from utils.build_graph import build_regular_structure
 
 np.random.seed(123)
 
@@ -71,7 +71,7 @@ feats.sum()
 # Cluster resulting features
 
 nfeats = feats - feats.mean(axis=0, keepdims=True)
-nfeats /= nfeats.std(axis=0, keepdims=True)
+nfeats /= (1e-10 + nfeats.std(axis=0, keepdims=True))
 nfeats[np.isnan(nfeats)] = 0
 
 pca_feats = PCA(n_components=10).fit_transform(nfeats)
