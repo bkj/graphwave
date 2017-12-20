@@ -25,8 +25,8 @@ np.random.seed(123)
 # --
 # Helpers
 
-def characteristic_function(s, t=np.arange(0, 100, 2)):
-    return (np.exp(np.complex(0, 1) * s) ** t.reshape(-1, 1)).mean(axis=1)
+def characteristic_function(node_sig, t=np.arange(0, 100, 2)):
+    return (np.exp(np.complex(0, 1) * node_sig) ** t.reshape(-1, 1)).mean(axis=1)
 
 # --
 # Create graph
@@ -42,7 +42,7 @@ G, colors = build_regular_structure(
 
 adj = nx.adjacency_matrix(G)
 
-taus = [0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1]
+taus = [0.5, 0.6]# , 0.7, 0.8, 0.9, 1.0, 1.1]
 
 # Create kernel
 pG = pygsp.graphs.Graph(adj, lap_type='normalized')
@@ -50,7 +50,7 @@ pG.estimate_lmax()
 heat_kernel = pygsp.filters.Heat(pG, taus, normalize=False)
 
 # Apply kernel at every node
-heat_print = heat_kernel.analyze(np.eye(pG.N)).transpose((2, 0, 1))
+heat_print = heat_kernel.analyze(np.eye(pG.N)[:,:10]).transpose((2, 0, 1))
 
 # Create features
 feats = []

@@ -8,6 +8,7 @@ from __future__ import division, print_function
 
 import numpy as np
 from scipy import sparse
+from joblib import Parallel, delayed
 
 def estimate_lmax(L):
     try:
@@ -46,7 +47,7 @@ def featurize(heat_print):
     return feats
 
 
-def delayed_featurize(heat_print):
+def _delayed_featurize(heat_print):
     """ compute graphwave features -- but don't average """
     feats = []
     for i, sig in enumerate(heat_print):
@@ -60,3 +61,26 @@ def delayed_featurize(heat_print):
         
     feats = np.hstack(feats)
     return feats
+
+
+def par_graphwave(hk, n_chunks=10, **kwargs):
+    """ parallel filter and featurize """
+    assert hk.num_nodes % n_chunks == 0
+    
+    global _runner
+    def _runner(chunk):
+        return _delayed_featurize(hk.filter(chunk))
+    
+    chunks = np.array_split(np.eye(hk.num_nodes), n_chunks, axis=1)
+    
+    print('par_graphwave -> starting jobs')
+    jobs = [delayed(_runner)(chunk) for chunk in chunks]
+    results = Parallel(**kwargs)(jobs)
+    print('par_graphwave -> finishing jobs')
+    
+    tmp = np.array(results).mean(axis=0)
+    pfeats = np.empty((tmp.shape[0], tmp.shape[1] * 2))
+    pfeats[:,0::2] = tmp.real
+    pfeats[:,1::2] = tmp.imag
+    
+    return pfeats
