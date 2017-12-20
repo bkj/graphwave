@@ -49,16 +49,15 @@ feats2 = featurize(heat_print2)
 assert (heat_print == heat_print2).all()
 assert (feats == feats2).all()
 
-# >>
-
-from simple import _filter
+# --
+# Parallel test
 
 def par_featurize(hk, num_chunks=10):
     assert hk.num_nodes % num_chunks == 0
     
     global _runner
     def _runner(chunk):
-        return delayed_featurize(_filter(hk.L, hk.num_nodes, hk.lmax, hk.taus, chunk))
+        return delayed_featurize(hk.filter(chunk))
     
     chunks = np.array_split(np.eye(hk.num_nodes), num_chunks, axis=1)
     
