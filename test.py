@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 """
-    example.py
+    test.py
+    
+    Test to verify that SimpleHeat and `par_graphwave` yield same results
+    as original code
 """
 
 from __future__ import division, print_function

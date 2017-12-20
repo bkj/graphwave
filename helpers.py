@@ -31,30 +31,15 @@ def characteristic_function(s, t=np.arange(0, 100, 2)):
     return (np.exp(np.complex(0, 1) * s) ** t.reshape(-1, 1)).mean(axis=1)
 
 
-def featurize(heat_print):
+def featurize(heat_print, delayed=False):
     """ compute graphwave features """
     feats = []
     for i, sig in enumerate(heat_print):
         sig_feats = []
         for node_sig in sig:
             node_feats = characteristic_function(node_sig)
-            node_feats = np.column_stack([node_feats.real, node_feats.imag]).reshape(-1)
-            sig_feats.append(node_feats)
-        
-        feats.append(np.vstack(sig_feats))
-        
-    feats = np.hstack(feats)
-    return feats
-
-
-def _delayed_featurize(heat_print):
-    """ compute graphwave features -- but don't average """
-    feats = []
-    for i, sig in enumerate(heat_print):
-        sig_feats = []
-        for node_sig in sig:
-            node_feats = characteristic_function(node_sig)
-            # node_feats = np.column_stack([node_feats.real, node_feats.imag]).reshape(-1)
+            if not delayed:
+                node_feats = np.column_stack([node_feats.real, node_feats.imag]).reshape(-1)
             sig_feats.append(node_feats)
         
         feats.append(np.vstack(sig_feats))
@@ -69,7 +54,7 @@ def par_graphwave(hk, n_chunks=10, **kwargs):
     
     global _runner
     def _runner(chunk):
-        return _delayed_featurize(hk.filter(chunk))
+        return featurize(hk.filter(chunk), delayed=True)
     
     chunks = np.array_split(np.eye(hk.num_nodes), n_chunks, axis=1)
     
