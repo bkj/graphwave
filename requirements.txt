@@ -2,3 +2,4 @@ pygsp
 networkx
 pyemd
 seaborn
+joblib
