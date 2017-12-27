@@ -3,11 +3,14 @@
 # run.sh
 
 # --
-# Simple example to understand what's going on
+# Very small (synthetic) example to understand what's going on
 
 python simple-example.py
 
 # --
-# Run in parallel on a larger graph
+# Run in parallel on a larger (synthetic) graph
 
-python par.py --n-jobs 32
+python parallel-example.py --n-jobs 32
+
+# --
+# Run in parallel on a real graph

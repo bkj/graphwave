@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 """
-    par.py
+    parallel-example.py
 """
 
 from __future__ import division, print_function
