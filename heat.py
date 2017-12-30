@@ -8,6 +8,7 @@
 
 from __future__ import division, print_function
 
+import cupy
 import numpy as np
 from scipy import sparse
 
@@ -103,3 +104,53 @@ class Heat(object):
         r = r.transpose((1, 0, 2))
         # ^^ taus x signals x nodes
         return r
+
+
+class CupyHeat(Heat):
+    
+    def __init__(self, W, taus, lmax=None):
+        super(CupyHeat, self).__init__(W, taus, lmax=lmax)
+        self.L = cupy.sparse.csr_matrix(self.L)
+    
+    def filter(self, signal, order=30):
+        assert signal.shape[0] == self.num_nodes, 'signal.shape[0] != self.num_nodes'
+        n_signals = signal.shape[1]
+        n_features_out = len(self.taus)
+        
+        # --
+        # compute_cheby_coeff
+        
+        c = [self._compute_cheby_coeff(tau=tau, order=order) for tau in self.taus]
+        c = np.atleast_2d(c)
+        
+        # --
+        # cheby_op
+        r = cupy.zeros((self.num_nodes * n_features_out, n_signals))
+        a = self.lmax / 2.
+        
+        signal_ = cupy.array(signal)
+        twf_old = signal_
+        twf_cur = (self.L.dot(signal_) - a * signal_) / a
+        
+        tmpN = np.arange(self.num_nodes, dtype=int)
+        for i in range(n_features_out):
+            r[tmpN + self.num_nodes * i] = 0.5 * c[i, 0] * twf_old + c[i, 1] * twf_cur
+        
+        factor = 2 / a * (self.L - a * cupy.sparse.eye(self.num_nodes))
+        for k in range(2, c.shape[1]):
+            twf_new = factor.dot(twf_cur) - twf_old
+            
+            for i in range(n_features_out):
+                r[tmpN + self.num_nodes * i] += c[i, k] * twf_new
+                
+            twf_old = twf_cur
+            twf_cur = twf_new
+        
+        # --
+        # return
+        
+        r = r.get().reshape((self.num_nodes, n_features_out, n_signals), order='F')
+        r = r.transpose((1, 0, 2))
+        # ^^ taus x signals x nodes
+        return r
+
