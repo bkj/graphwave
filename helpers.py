@@ -10,22 +10,6 @@ import numpy as np
 from scipy import sparse
 from joblib import Parallel, delayed
 
-def estimate_lmax(L):
-    try:
-        lmax = sparse.linalg.eigsh(L, k=1, tol=5e-3, ncv=min(L.shape[0], 10), return_eigenvectors=False)
-        lmax = lmax[0]
-        lmax *= 1.01
-        return lmax
-    
-    except sparse.linalg.ArpackNoConvergence:
-        return 2
-
-
-def compute_laplacian(W, dw):
-    d = np.power(dw, -0.5)
-    D = sparse.diags(np.ravel(d), 0).tocsc()
-    return sparse.identity(W.shape[0]) - D * W * D
-
 
 def characteristic_function(s, t=np.arange(0, 100, 2)):
     return (np.exp(np.complex(0, 1) * s) ** t.reshape(-1, 1)).mean(axis=1)

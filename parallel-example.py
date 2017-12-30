@@ -12,7 +12,7 @@ import numpy as np
 import networkx as nx
 from time import time
 
-from simple import SimpleHeat
+import heat
 from helpers import par_graphwave
 
 
@@ -30,7 +30,7 @@ def parse_args():
     
     args = parser.parse_args()
     
-    assert args.n_nodes % args.n_jobs == 0, 'args.n_nodes mod args.n_jobs == 0'
+    assert args.n_nodes % args.n_jobs == 0, 'args.n_nodes mod args.n_jobs != 0'
     
     return args
 
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     
     print("parallel-example.py: running", file=sys.stderr)
     t = time()
-    hk = SimpleHeat(W=W, taus=taus)
+    hk = heat.Heat(W=W, taus=taus)
     pfeats = par_graphwave(hk, n_chunks=args.n_chunks, n_jobs=args.n_jobs, verbose=10)
     run_time = time() - t
     

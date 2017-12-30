@@ -2,7 +2,7 @@
 
 
 """
-    simple.py
+    heat.py
 """
 
 
@@ -11,12 +11,30 @@ from __future__ import division, print_function
 import numpy as np
 from scipy import sparse
 
-from helpers import estimate_lmax, compute_laplacian
+# --
+# Helpers
+
+def estimate_lmax(L):
+    try:
+        lmax = sparse.linalg.eigsh(L, k=1, tol=5e-3, ncv=min(L.shape[0], 10), return_eigenvectors=False)
+        lmax = lmax[0]
+        lmax *= 1.01
+        return lmax
+    
+    except sparse.linalg.ArpackNoConvergence:
+        return 2
+
+
+def compute_laplacian(W, dw):
+    d = np.power(dw, -0.5)
+    D = sparse.diags(np.ravel(d), 0).tocsc()
+    return sparse.identity(W.shape[0]) - D * W * D
+
 
 # --
 # Heat kernel
 
-class SimpleHeat(object):
+class Heat(object):
     
     def __init__(self, W, taus, lmax=None):
         assert isinstance(taus, list)

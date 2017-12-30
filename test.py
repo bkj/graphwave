@@ -12,8 +12,9 @@ from __future__ import division, print_function
 import pygsp
 import numpy as np
 import networkx as nx
+from time import time
 
-from simple import SimpleHeat
+import heat
 from helpers import featurize, par_graphwave
 
 # --
@@ -41,7 +42,7 @@ feats = featurize(heat_print)
 # --
 # Simple
 
-simple_heat_kernel = SimpleHeat(W=W, lmax=G.lmax, taus=taus)
+simple_heat_kernel = heat.Heat(W=W, lmax=G.lmax, taus=taus)
 simple_heat_print = simple_heat_kernel.filter(s)
 simple_feats = featurize(simple_heat_print)
 

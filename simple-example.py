@@ -13,23 +13,23 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 from matplotlib import pyplot as plt
 
-from simple import SimpleHeat
+import heat
 from helpers import featurize
 from utils.build_graph import build_regular_structure
-
-np.random.seed(123)
-
 
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--outpath', type=str, default='./simple-feats')
     parser.add_argument('--plot', action="store_true")
+    
+    parser.add_argument('--seed', type=int, default=123)
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     
     args = parse_args()
+    np.random.seed(args.seed)
     
     # --
     # Create graph
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     
     # Apply kernel at every node
     signal = np.eye(W.shape[0])
-    heat_kernel = SimpleHeat(W=W, taus=taus)
+    heat_kernel = heat.Heat(W=W, taus=taus)
     heat_print = heat_kernel.filter(signal)
     feats = featurize(heat_print)
     
