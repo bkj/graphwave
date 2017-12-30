@@ -52,7 +52,7 @@ if __name__ == "__main__":
     print("par.py: running", file=sys.stderr)
     t = time()
     hk = SimpleHeat(W=W, taus=taus)
-    pfeats = par_graphwave(hk, n_chunks=args.n_chunks, n_jobs=args.n_jobs)
+    pfeats = par_graphwave(hk, n_chunks=args.n_chunks, n_jobs=args.n_jobs, verbose=10)
     run_time = time() - t
     
     print("par.py: took %f seconds" % run_time, file=sys.stderr)
