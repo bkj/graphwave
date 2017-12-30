@@ -20,11 +20,13 @@ from helpers import featurize, par_graphwave
 # Create graph
 
 np.random.seed(123)
-W = nx.adjacency_matrix(nx.gnp_random_graph(100, 0.1))
+
+num_nodes = 100
+W = nx.adjacency_matrix(nx.gnp_random_graph(num_nodes, 0.1))
 W.eliminate_zeros()
 
 taus = [0.5, 0.6, 0.7]
-s = np.eye(100)
+s = np.eye(num_nodes)
 
 G = pygsp.graphs.Graph(W, lap_type='normalized')
 G.estimate_lmax()
@@ -52,4 +54,3 @@ assert (feats == simple_feats).all()
 par_feats = par_graphwave(simple_heat_kernel)
 assert np.allclose(feats, par_feats)
 assert np.allclose(simple_feats, par_feats)
-

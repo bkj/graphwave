@@ -30,7 +30,7 @@ def parse_args():
     
     args = parser.parse_args()
     
-    assert args.n_nodes % args.n_jobs == 0, 'args.n_nodes % args.n_jobs == 0'
+    assert args.n_nodes % args.n_jobs == 0, 'args.n_nodes mod args.n_jobs == 0'
     
     return args
 
@@ -43,16 +43,16 @@ if __name__ == "__main__":
     
     np.random.seed(args.seed)
     
-    print("par.py: creating graph", file=sys.stderr)
-    W = nx.adjacency_matrix(nx.gnp_random_graph(args.n_nodes, args.p))
+    print("parallel-example.py: creating graph", file=sys.stderr)
+    W = nx.adjacency_matrix(nx.gnp_random_graph(args.n_nodes, args.p, seed=args.seed + 1))
     W.eliminate_zeros()
     
     taus = map(float, args.taus.split(','))
     
-    print("par.py: running", file=sys.stderr)
+    print("parallel-example.py: running", file=sys.stderr)
     t = time()
     hk = SimpleHeat(W=W, taus=taus)
     pfeats = par_graphwave(hk, n_chunks=args.n_chunks, n_jobs=args.n_jobs, verbose=10)
     run_time = time() - t
     
-    print("par.py: took %f seconds" % run_time, file=sys.stderr)
+    print("parallel-example.py: took %f seconds" % run_time, file=sys.stderr)
