@@ -38,7 +38,7 @@ feats = featurize(heat_print)
 # Parallel test
 
 par_feats = par_graphwave(heat_kernel, n_chunks=2, n_jobs=2, verbose=10)
-assert np.allclose(feats, par_feats)
+
 assert np.allclose(feats, par_feats)
 
 # --
@@ -50,4 +50,5 @@ cupy_feats = featurize(cupy_heat_print)
 
 assert np.allclose(heat_print, cupy_heat_print)
 assert np.allclose(feats, cupy_feats)
+assert np.allclose(par_feats, cupy_feats)
 
