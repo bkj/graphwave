@@ -6,16 +6,20 @@
 
 from __future__ import print_function
 
+from rsub import *
+from matplotlib import pyplot as plt
+plt.show = show_plot
+
 import argparse
 import numpy as np
 import networkx as nx
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
-from matplotlib import pyplot as plt
 
 import heat
 from helpers import featurize
 from utils.build_graph import build_regular_structure
+
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -71,11 +75,12 @@ if __name__ == "__main__":
     clus = KMeans(n_clusters=len(set(colors))).fit(pca_feats).labels_
     
     if args.plot:
+        from matplotlib import pyplot as plt
         # Plot features in first 2 PCA dimensions
         jitter_pca_feats = pca_feats + np.random.uniform(0, 1, pca_feats.shape)
         _ = plt.scatter(jitter_pca_feats[:,0], jitter_pca_feats[:,1], alpha=0.25, c=clus, cmap='rainbow')
         plt.show()
-        
+
         # Show roles on graph
         np.random.seed(1235)
         _ = nx.draw(G, pos=nx.spring_layout(G, iterations=200), 
