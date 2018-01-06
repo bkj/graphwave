@@ -24,6 +24,7 @@ def featurize(heat_print, delayed=False):
             node_feats = characteristic_function(node_sig)
             if not delayed:
                 node_feats = np.column_stack([node_feats.real, node_feats.imag]).reshape(-1)
+            
             sig_feats.append(node_feats)
         
         feats.append(np.vstack(sig_feats))

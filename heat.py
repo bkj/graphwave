@@ -11,6 +11,7 @@ from __future__ import division, print_function
 import cupy
 import numpy as np
 from scipy import sparse
+from time import time
 
 # --
 # Helpers
@@ -37,13 +38,16 @@ def compute_laplacian(W, dw):
 
 class Heat(object):
     
-    def __init__(self, W, taus, lmax=None):
+    def __init__(self, W=None, taus=None, L=None, lmax=None):
         assert isinstance(taus, list)
         
-        self.num_nodes = W.shape[0]
-        
-        dw = np.asarray(W.sum(axis=1)).squeeze()
-        self.L = compute_laplacian(W, dw)
+        if L is None:
+            self.num_nodes = W.shape[0]
+            dw = np.asarray(W.sum(axis=1)).squeeze()
+            self.L= compute_laplacian(W, dw)
+        else:
+            self.num_nodes = L.shape[0]
+            self.L = L
         
         self.lmax = estimate_lmax(self.L) if lmax is None else lmax
         self.taus = taus
@@ -94,8 +98,8 @@ class Heat(object):
 
 class CupyHeat(Heat):
     
-    def __init__(self, W, taus, lmax=None):
-        super(CupyHeat, self).__init__(W, taus, lmax=lmax)
+    def __init__(self, W=None, taus=None, L=None, lmax=None):
+        super(CupyHeat, self).__init__(W=W, taus=taus, L=L, lmax=lmax)
         self.L = cupy.sparse.csr_matrix(self.L)
     
     def filter(self, signal, order=30):
