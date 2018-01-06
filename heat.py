@@ -81,14 +81,22 @@ class Heat(object):
         twf_cur = 1. / a * (self.L.dot(signal) - a * signal)
         
         for i in range(n_features_out):
-            r[i] = 0.5 * c[i, 0] * twf_old + c[i, 1] * twf_cur
+            tmp = 0.5 * c[i, 0] * twf_old + c[i, 1] * twf_cur
+            if sparse.issparse(tmp):
+                tmp = tmp.todense()
+            
+            r[i] = tmp
         
         factor = 2 / a * (self.L - a * sparse.eye(self.num_nodes))
         for k in range(2, c.shape[1]):
             twf_new = factor.dot(twf_cur) - twf_old
             
             for i in range(n_features_out):
-                r[i] += c[i, k] * twf_new
+                tmp = c[i, k] * twf_new
+                if sparse.issparse(tmp):
+                    tmp = tmp.todense()
+                
+                r[i] += tmp
             
             twf_old = twf_cur
             twf_cur = twf_new

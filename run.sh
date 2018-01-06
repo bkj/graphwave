@@ -16,4 +16,4 @@ python simple-example.py --plot
 # --
 # Run in parallel on a larger (synthetic) graph
 
-python parallel-example.py --n-jobs 32 --n-nodes 3200
+python parallel-example.py --n-jobs 32 --n-nodes 12800 --p 0.001

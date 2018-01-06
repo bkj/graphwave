@@ -19,8 +19,8 @@ from helpers import featurize, par_graphwave
 
 np.random.seed(123)
 
-num_nodes = 100
-W = nx.adjacency_matrix(nx.gnp_random_graph(num_nodes, 0.1, seed=123 + 1))
+num_nodes = 1000
+W = nx.adjacency_matrix(nx.gnp_random_graph(num_nodes, 0.01, seed=123 + 1))
 W.eliminate_zeros()
 
 taus = [0.5, 0.6, 0.7]
