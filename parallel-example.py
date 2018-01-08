@@ -19,15 +19,11 @@ from helpers import par_graphwave
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--n-nodes', type=int, default=3200)
-    parser.add_argument('--p', type=float, default=0.01)
-    
+    parser.add_argument('--p', type=float, default=0.001)
     parser.add_argument('--taus', type=str, default="0.5")
-    
     parser.add_argument('--n-chunks', type=int, default=32)
     parser.add_argument('--n-jobs', type=int, default=32)
-    
     parser.add_argument('--seed', type=int, default=123)
-    
     return parser.parse_args()
 
 

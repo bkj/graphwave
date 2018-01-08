@@ -17,7 +17,6 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 
 import heat
-from helpers import featurize
 from utils.build_graph import build_regular_structure
 
 
@@ -54,8 +53,7 @@ if __name__ == "__main__":
     # Apply kernel at every node
     signal = np.eye(W.shape[0])
     heat_kernel = heat.Heat(W=W, taus=taus)
-    heat_print = heat_kernel.filter(signal)
-    feats = featurize(heat_print)
+    feats = heat_kernel.featurize(signal)
     
     print('simple-example.py: saving feats to %s.npy' % args.outpath)
     np.save(args.outpath, feats)
