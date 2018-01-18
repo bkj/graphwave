@@ -12,4 +12,4 @@ pip install -r requirements.txt
 
 See `./run.sh` for usage.
 
-See `./README.orig` for original documentation.
+See original [graphwave](https://github.com/snap-stanford/graphwave) implementation for some more details about the method
