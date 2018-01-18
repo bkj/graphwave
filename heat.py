@@ -8,10 +8,15 @@
 
 from __future__ import division, print_function
 
-import cupy
+import sys
 import numpy as np
 from scipy import sparse
 from time import time
+
+try:
+    import cupy
+except:
+    print('WARNING: install cupy > 2.0 for GPU support', file=sys.stderr)
 
 # --
 # Helpers
