@@ -2,7 +2,7 @@
 
 # run.sh
 
-# --
+# -------------------------------------------------------------------------------------
 # Run on synthetic graphs
 
 mkdir -p {_data,_results}/synthetic
@@ -24,8 +24,8 @@ python main.py --n-jobs 32 \
     --outpath ./_results/synthetic/51200 \
     --num-queries 512
 
-# --
-# Run on POKEC graph
+# -------------------------------------------------------------------------------------
+# Run on POKEC graph (~ 3 minutes)
 
 mkdir -p {_data,_results}/pokec
 wget --header "Authorization:$TOKEN" https://hiveprogram.com/data/_v0/generic/pokec.edgelist.gz
@@ -35,3 +35,9 @@ python main.py --n-jobs 32 \
     --inpath ./_data/pokec/pokec.edgelist \
     --outpath ./_results/pokec/pokec \
     --num-queries 64 
+
+# -------------------------------------------------------------------------------------
+# Run on larger graphs
+
+# a) could run on `pokec` graph with a larger `--num-queries` parameter
+# b) could run on a larger graph
