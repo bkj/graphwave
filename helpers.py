@@ -10,15 +10,14 @@ from __future__ import division, print_function
 import numpy as np
 from joblib import Parallel, delayed
 
-def par_graphwave(hk, n_chunks=10, pct_queries=1.0, **kwargs):
+def par_graphwave(hk, num_queries, n_chunks=10, **kwargs):
     global _runner
     def _runner(chunk):
         return hk.featurize(chunk)
     
-    if pct_queries == 1:
+    if num_queries == hk.num_nodes:
         queries = np.eye(hk.num_nodes)
     else:
-        num_queries = int(pct_queries * hk.num_nodes)
         query_idx = np.sort(np.random.choice(hk.num_nodes, num_queries, replace=False))
         
         queries = np.zeros((hk.num_nodes, num_queries), dtype=int)
